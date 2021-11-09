@@ -4,8 +4,9 @@ import datetime
 import hashlib
 import json
 from flask import Flask, jsonify
+from werkzeug.wrappers import response
 
-# creating blockchain
+# defining blockchain
 
 class Blockchain:
 
@@ -67,3 +68,51 @@ class Blockchain:
             previousBlock = currentBlock
             currentBlockIndex += 1
         return True # if chain is valid
+
+# creating a Web App to interact with this blockchain
+
+webApp = Flask(__name__)
+
+# creating blockchain
+
+blockchain = Blockchain()
+
+# mining a block
+
+@webApp.route('/mine_block', methods = ['GET']) # url request for mining a block
+
+def mineBlock():
+    # collect info regarding previous block (or latest block)
+    previousBlock = blockchain.getPreviousBlock()
+    previousProof = previousBlock['proof']
+    # generate current block's proof
+    proof = blockchain.proofOfWork(previousProof)
+    # get previous block's hash digest, to link current block with it
+    previousHash = blockchain.hash(previousBlock)
+    # create block with the help of current proof of work and previous block's hash
+    block = blockchain.createBlock(proof, previousHash)
+    # generating response to miner
+    response = {
+        'message': 'Congratulations! You mined a block',
+        'index': block['index'],
+        'timestamp': block['timestamp'],
+        'proof_of_work': block['proof_of_work'],
+        'previous_hash': block['previous_hash']
+    }
+    # returning response in json format
+    # returning HTTP Status Code 200 (for success)
+    return jsonify(response), 200
+
+@webApp.route('/get_chain', methods = ['GET']) # url request for getting blockchain
+
+def getChain():
+
+    response = {
+        'chain': blockchain.chain,
+        'length': len(blockchain.chain)
+    }
+    return jsonify(response), 200
+
+# running the webApp 
+
+webApp.run(host = '0.0.0.0', port = 5000)
