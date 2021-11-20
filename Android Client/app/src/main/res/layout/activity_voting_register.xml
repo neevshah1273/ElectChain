@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
+    <include
+        android:id="@+id/title_bar"
+        layout="@layout/title_bar_return" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/your_vote_hase_been_registered_stay_tuned_to_get_results"
+        android:textStyle="bold"
+        android:textSize="36sp"
+        android:textColor="#AB7FEA"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:gravity="center_vertical"/>
+</LinearLayout>

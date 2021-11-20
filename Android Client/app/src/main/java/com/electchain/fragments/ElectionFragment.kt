@@ -1,16 +1,23 @@
 package com.electchain.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import com.electchain.R
+import com.electchain.activities.VotingActivity
+import com.electchain.adapters.CandidateAdapter
+import com.electchain.models.ItemsViewModelCandidate
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class ElectionFragment : Fragment() {
+
     private var param1: String? = null
     private var param2: String? = null
 
@@ -27,6 +34,15 @@ class ElectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_election, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        view.findViewById<Button>(R.id.votingBtn).setOnClickListener {
+            startActivity(Intent(context, VotingActivity::class.java))
+        }
+        val tvVotingDeadline = view.findViewById<TextView>(R.id.tvVotingDeadline)
     }
 
     companion object {
