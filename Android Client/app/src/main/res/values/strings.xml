@@ -16,4 +16,13 @@
     <string name="election">Election</string>
     <string name="candidate">Candidate</string>
     <string name="account">My Account</string>
+    <string name="cast_your_vote">Cast your Vote</string>
+    <string name="no_of_votes">No. of Votes:</string>
+    <string name="total_no_of_votes">Total no. of Votes: </string>
+    <string name="voting_completed">Voting completed till now...</string>
+    <string name="no_of_user_who_voted">No. of users who voted: </string>
+    <string name="total_no_of_registered_users">Total no. of registered users: </string>
+    <string name="voting_has_now_nended_n_nstay_tuned_to_get_results">Voting has now ended.Stay tuned to get results.</string>
+    <string name="save">Save</string>
+    <string name="logout">Logout</string>
 </resources>
