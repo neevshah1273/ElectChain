@@ -29,4 +29,8 @@
     <string name="candidate_name">Candidate Name</string>
     <string name="vote">Vote</string>
     <string name="your_vote_hase_been_registered_stay_tuned_to_get_results">Your vote hase been registered. Stay tuned to get results.</string>
+    <string name="voter">Voter</string>
+    <string name="admin">Admin</string>
+    <string name="password">Password</string>
+    <string name="enter_voter_id">Enter your Voter id</string>
 </resources>

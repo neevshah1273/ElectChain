@@ -1,32 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity"
     android:orientation="vertical"
-    android:background="@color/background_color">
+    android:background="@color/background_color"
+    tools:context=".activities.MainActivity">
 
     <include
-        android:id="@+id/titleBar"
+        android:id="@+id/title_bar"
         layout="@layout/title_bar" />
 
-    <FrameLayout
-        android:id="@+id/flWrapper"
+    <include
+        android:layout_height="160dp"
+        android:layout_width="160dp"
+        layout="@layout/logo_name"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomNavigation" />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp">
+        <Button
+            android:id="@+id/voterBtn"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="@string/voter"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:letterSpacing="0.13"
+            android:textStyle="bold"
+            android:background="@drawable/red_rounded_rectangle_button"
+            tools:targetApi="lollipop"
+            android:drawableLeft="@drawable/ic_person"
+            android:drawableStart="@drawable/ic_person"
+            android:paddingStart="20dp"
+            android:paddingEnd="45dp"
+            android:paddingRight="45dp"
+            android:paddingLeft="20dp"/>
+        <Button
+            android:id="@+id/adminBtn"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/admin"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:letterSpacing="0.13"
+            android:textStyle="bold"
+            android:background="@drawable/green_rounded_rectangle_button"
+            android:drawableStart="@drawable/ic_admin"
+            android:drawableLeft="@drawable/ic_admin"
+            android:paddingStart="20dp"
+            android:paddingEnd="45dp"
+            android:paddingRight="45dp"
+            android:paddingLeft="20dp"
+            tools:ignore="RtlSymmetry"
+            tools:targetApi="lollipop" />
+    </LinearLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:itemBackground="@color/background_color"
-        app:itemIconTint="@drawable/nav_item_color_selected"
-        app:itemTextColor="@drawable/nav_item_color_selected"
-        app:labelVisibilityMode="labeled"
-        app:menu="@menu/nav_menu" />
-
-</RelativeLayout>
+</LinearLayout>

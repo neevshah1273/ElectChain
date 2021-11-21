@@ -1,8 +1,10 @@
 package com.electchain.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.electchain.R
 import com.electchain.fragments.CandidateFragment
@@ -20,27 +22,13 @@ class MainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        val electionFragment = ElectionFragment()
-        val candidateFragment = CandidateFragment()
-        val voterFragment = VoterFragment()
-
-        makeCurrentFragment(electionFragment)
-
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-        bottomNavigation.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.ic_election -> makeCurrentFragment(electionFragment)
-                R.id.ic_candidate -> makeCurrentFragment(candidateFragment)
-                R.id.ic_account -> makeCurrentFragment(voterFragment)
-            }
-            true
+        findViewById<Button>(R.id.voterBtn).setOnClickListener {
+            startActivity(Intent(this, VoterLoginActivity::class.java))
         }
-    }
 
-    private fun makeCurrentFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.flWrapper, fragment)
-            commit()
+        findViewById<Button>(R.id.adminBtn).setOnClickListener {
+            startActivity(Intent(this, AdminLoginActivity::class.java))
         }
+
     }
 }

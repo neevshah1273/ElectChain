@@ -1,11 +1,16 @@
 package com.electchain.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import com.electchain.R
+import com.electchain.activities.VoterLoginActivity
+import com.electchain.utils.Constants.sessionManager
+import com.electchain.utils.SessionManager
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -26,8 +31,14 @@ class VoterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_voter, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            logout()
+        }
     }
 
     companion object {
@@ -39,5 +50,12 @@ class VoterFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun logout() {
+        sessionManager = activity?.let { SessionManager(it.applicationContext) }!!
+        sessionManager.deleteAuthToken()
+        startActivity(Intent(activity, VoterLoginActivity::class.java))
+        requireActivity().finish()
     }
 }
