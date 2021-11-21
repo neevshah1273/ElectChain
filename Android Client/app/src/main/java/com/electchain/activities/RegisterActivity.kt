@@ -26,18 +26,6 @@ class RegisterActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        val registerDateOfBirth = findViewById<EditText>(R.id.registerDateOfBirth)
 
-        registerDateOfBirth.setOnClickListener {
-            val c = Calendar.getInstance()
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
-            val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener {
-                view, year, monthOfYear, dayOfMonth ->
-                registerDateOfBirth.setText("$dayOfMonth/${monthOfYear + 1}/$year")
-            }, year, month, day)
-            dpd.show()
-        }
     }
 }

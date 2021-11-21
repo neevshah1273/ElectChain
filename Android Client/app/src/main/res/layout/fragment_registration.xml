@@ -3,33 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background_color"
-    tools:context=".activities.RegisterActivity">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
-        <include
-            android:id="@+id/titleBar"
-            layout="@layout/title_bar" />
-
-        <include
-            android:layout_height="100dp"
-            android:layout_width="100dp"
-            layout="@layout/logo_name"
-            android:layout_gravity="center"
-            android:layout_marginTop="50dp" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp">
-
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="50dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_registration"
+                android:layout_gravity="center_horizontal"
+                android:textStyle="bold"
+                android:textColor="#DA166113"
+                android:textSize="28sp"
+                android:layout_marginBottom="20dp" />
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -43,12 +39,10 @@
                     android:textSize="17sp"
                     android:inputType="text"
                     android:paddingTop="15dp"
-                    android:paddingLeft="20dp"
                     android:paddingBottom="25dp"
                     tools:ignore="RtlSymmetry,UnusedAttribute"
                     android:paddingStart="20dp" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -62,12 +56,10 @@
                     android:textSize="17sp"
                     android:inputType="text"
                     android:paddingTop="15dp"
-                    android:paddingLeft="20dp"
                     android:paddingBottom="25dp"
                     tools:ignore="RtlSymmetry,UnusedAttribute"
                     android:paddingStart="20dp" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -81,7 +73,6 @@
                     android:textSize="17sp"
                     android:inputType="text"
                     android:paddingTop="15dp"
-                    android:paddingLeft="20dp"
                     android:paddingBottom="25dp"
                     tools:ignore="RtlSymmetry,TextFields,UnusedAttribute"
                     android:paddingStart="20dp"
@@ -90,7 +81,6 @@
                     android:focusable="false"
                     android:focusableInTouchMode="false"/>
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -104,18 +94,16 @@
                     android:textSize="17sp"
                     android:inputType="text"
                     android:paddingTop="15dp"
-                    android:paddingLeft="20dp"
                     android:paddingBottom="25dp"
                     tools:ignore="RtlSymmetry,TextFields,UnusedAttribute"
                     android:paddingStart="20dp" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp">
                 <EditText
-                    android:id="@+id/registerEmailAddressName"
+                    android:id="@+id/registerEmailAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email_address"
@@ -123,12 +111,10 @@
                     android:textSize="17sp"
                     android:inputType="text"
                     android:paddingTop="15dp"
-                    android:paddingLeft="20dp"
                     android:paddingBottom="25dp"
                     tools:ignore="RtlSymmetry,TextFields,UnusedAttribute"
                     android:paddingStart="20dp" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -142,12 +128,10 @@
                     android:textSize="17sp"
                     android:inputType="text"
                     android:paddingTop="15dp"
-                    android:paddingLeft="20dp"
                     android:paddingBottom="25dp"
                     tools:ignore="RtlSymmetry,UnusedAttribute"
                     android:paddingStart="20dp" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <Button
                 android:id="@+id/btnRegister"
                 android:layout_width="match_parent"
@@ -159,10 +143,6 @@
                 android:layout_marginTop="50dp"
                 android:text="@string/register"
                 android:textSize="30sp" />
-
-
         </LinearLayout>
-
     </LinearLayout>
-
 </ScrollView>

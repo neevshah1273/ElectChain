@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "138649356944",
+    "project_id": "electchain-79613",
+    "storage_bucket": "electchain-79613.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:138649356944:android:1c95826a81849090f62615",
+        "android_client_info": {
+          "package_name": "com.electchain"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "138649356944-isr0dig2ci1hk62br6o8g45810o8m9jo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0Fwh-0bgHROOjibtXSSrmwA-zZ4r8kMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "138649356944-isr0dig2ci1hk62br6o8g45810o8m9jo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

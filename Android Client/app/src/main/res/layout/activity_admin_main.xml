@@ -5,17 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_color"
+    android:background="#287ECF6C"
     tools:context=".activities.VoterMainActivity">
 
     <include
-        android:id="@+id/titleBar"
-        layout="@layout/title_bar" />
+        android:id="@+id/title_bar"
+        layout="@layout/title_bar_green" />
 
     <FrameLayout
         android:id="@+id/flWrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/title_bar"
         android:layout_above="@+id/bottomNavigation" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,10 +24,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/background_color"
-        app:itemIconTint="@drawable/nav_item_color_selected"
-        app:itemTextColor="@drawable/nav_item_color_selected"
+        app:itemIconTint="@drawable/nav_item_color_selected_admin"
+        app:itemTextColor="@drawable/nav_item_color_selected_admin"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/nav_menu" />
+        app:menu="@menu/nav_menu_admin" />
 
 </RelativeLayout>
