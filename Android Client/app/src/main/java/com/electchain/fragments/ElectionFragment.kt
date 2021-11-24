@@ -1,5 +1,6 @@
 package com.electchain.fragments
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,6 +18,9 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class ElectionFragment : Fragment() {
+
+    private val currentVote = 35.0
+    private val totalVote = 70.0
 
     private var param1: String? = null
     private var param2: String? = null
@@ -36,6 +40,7 @@ class ElectionFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_election, container, false)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -43,6 +48,9 @@ class ElectionFragment : Fragment() {
             startActivity(Intent(context, VotingActivity::class.java))
         }
         val tvVotingDeadline = view.findViewById<TextView>(R.id.tvVotingDeadline)
+        view.findViewById<TextView>(R.id.currentVotes).text = currentVote.toInt().toString()
+        view.findViewById<TextView>(R.id.totalVotes).text = totalVote.toInt().toString()
+        view.findViewById<TextView>(R.id.votePercent).text = "${((currentVote / totalVote) * 100)} %"
     }
 
     companion object {

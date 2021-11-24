@@ -11,7 +11,7 @@ import android.widget.EditText
 import android.widget.Toast
 import com.electchain.R
 import com.electchain.models.Candidate
-import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -44,16 +44,16 @@ class AddCandidateFragment : Fragment() {
         view.findViewById<Button>(R.id.btnSubmit).setOnClickListener {
             val etCandidateName = view.findViewById<EditText>(R.id.etCandidateName).text.toString()
             val etCampaignDescription = view.findViewById<EditText>(R.id.etCampaignDescription).text.toString()
-
             if (checkValidation(etCandidateName, etCampaignDescription)) {
-                val databaseReference = FirebaseDatabase.getInstance().getReference("Candidates")
-                val candidate = Candidate(etCandidateName, etCampaignDescription)
-                val id = databaseReference.push().key
-                Log.d("TAG", "id: $id")
-                databaseReference.child(id!!).setValue(candidate).addOnSuccessListener {
-                    Toast.makeText(requireActivity(), "Success", Toast.LENGTH_SHORT).show()
-                }.addOnFailureListener {
-                    Toast.makeText(requireActivity(), "Failure", Toast.LENGTH_SHORT).show()
+                val ref = FirebaseDatabase.getInstance("https://electchain-79613-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("candidates")
+                val uuid = ref.push().key!!
+                val candidate = Candidate(uuid, etCandidateName, etCampaignDescription)
+                ref.child(uuid).setValue(candidate).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(requireActivity(), "Candidate added successfully.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireActivity(), "Something went wrong. Try again later.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Toast.makeText(requireActivity(), "All fields are required.", Toast.LENGTH_SHORT).show()

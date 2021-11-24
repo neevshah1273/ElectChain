@@ -1,6 +1,7 @@
 package com.electchain.models
 
-class Candidate(
-    val candidate_name: String,
-    val campaign_description: String
-) {}
+data class Candidate (
+    val uuid: String = "",
+    val candidateName: String = "",
+    val campaignDescription: String = ""
+)

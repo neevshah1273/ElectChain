@@ -1,15 +1,23 @@
 package com.electchain.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.electchain.R
 import com.electchain.adapters.CandidateAdapter
+import com.electchain.models.Candidate
 import com.electchain.models.ItemsViewModelCandidate
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -41,16 +49,37 @@ class CandidateFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (!flag) {
-            data.add(ItemsViewModelCandidate(R.drawable.ic_person, "Paritosh Joshi", "This is my campaign description. Vote for me dummies."))
-            data.add(ItemsViewModelCandidate(R.drawable.ic_person, "Nisarg Dave", "This is my campaign description. Vote for me dummies."))
-            data.add(ItemsViewModelCandidate(R.drawable.ic_person, "Neev Shah", "This is my campaign description. Vote for me dummies."))
-            flag = true
-        }
         val recyclerViewCandidate = view.findViewById<RecyclerView>(R.id.recyclerViewCandidate)
         recyclerViewCandidate.layoutManager = LinearLayoutManager(context)
-        adapter = CandidateAdapter(data)
-        recyclerViewCandidate.adapter = adapter
+        if (!flag) {
+            addCandidateToView()
+            flag = true
+        }
+        if (flag) {
+            adapter = CandidateAdapter(data)
+            recyclerViewCandidate.adapter = adapter
+        }
+    }
+
+    private fun addCandidateToView() {
+        val database = FirebaseDatabase.getInstance("https://electchain-79613-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+        database.child("candidates").addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (item in snapshot.children) {
+                    data.add(ItemsViewModelCandidate(
+                        R.drawable.ic_person,
+                        "${item.child("candidateName").value}",
+                        "${item.child("campaignDescription").value}")
+                    )
+                }
+                adapter = CandidateAdapter(data)
+                view?.findViewById<RecyclerView>(R.id.recyclerViewCandidate)?.adapter = adapter
+            }
+
+            override fun onCancelled(e: DatabaseError) {
+                Toast.makeText(requireActivity(),e.message,Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     companion object {

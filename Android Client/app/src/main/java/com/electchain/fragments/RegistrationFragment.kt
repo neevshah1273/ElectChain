@@ -3,6 +3,7 @@ package com.electchain.fragments
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.electchain.R
+import com.electchain.models.Candidate
 import com.electchain.models.User
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
@@ -55,18 +58,26 @@ class RegistrationFragment : Fragment() {
             }, year, month, day)
             dpd.show()
         }
-        val firstName = view.findViewById<EditText>(R.id.registerFirstName).text.toString()
-        val lastName = view.findViewById<EditText>(R.id.registerLastName).text.toString()
-        val dob = registerDateOfBirth.text.toString()
-        val mobileNumber = view.findViewById<EditText>(R.id.registerMobileNumber).text.toString()
-        val emailAddress = view.findViewById<EditText>(R.id.registerEmailAddress).text.toString()
-        val voterId = view.findViewById<EditText>(R.id.registerVoterId).text.toString()
 
         view.findViewById<Button>(R.id.btnRegister).setOnClickListener {
+            val firstName = view.findViewById<EditText>(R.id.registerFirstName).text.toString()
+            val lastName = view.findViewById<EditText>(R.id.registerLastName).text.toString()
+            val dob = registerDateOfBirth.text.toString()
+            var mobileNumber = view.findViewById<EditText>(R.id.registerMobileNumber).text.toString()
+            val emailAddress = view.findViewById<EditText>(R.id.registerEmailAddress).text.toString()
+            val voterId = view.findViewById<EditText>(R.id.registerVoterId).text.toString()
+            
             if (checkValidation(firstName, lastName, dob, mobileNumber, emailAddress, voterId)) {
-                val databaseReference = FirebaseDatabase.getInstance().getReference("users")
+                val ref = FirebaseDatabase.getInstance("https://electchain-79613-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("users")
+                mobileNumber = "+91$mobileNumber"
                 val user = User(firstName, lastName, dob, mobileNumber, emailAddress, voterId)
-                databaseReference.setValue(user)
+                ref.child(mobileNumber).setValue(user).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(requireActivity(), "User registered successfully.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireActivity(), "Something went wrong. Try again later.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } else {
                 Toast.makeText(requireActivity(), "All fields are required.", Toast.LENGTH_SHORT).show()
             }

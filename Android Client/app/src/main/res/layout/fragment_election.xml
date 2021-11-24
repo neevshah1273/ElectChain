@@ -31,7 +31,6 @@
                 android:text="25 Nov 2021 5:00 PM"
                 android:textStyle="bold"
                 android:textSize="21sp"
-                android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:textColor="#DAE85E5E"/>
 
@@ -70,13 +69,12 @@
                         android:text="@string/no_of_user_who_voted"
                         android:textSize="24sp" />
                     <TextView
+                        android:id="@+id/currentVotes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="35"
                         android:textColor="#DAE85E5E"
                         android:textStyle="bold"
                         android:textSize="24sp"
-                        android:layout_marginLeft="10dp"
                         android:layout_marginStart="10dp" />
                 </LinearLayout>
                 <LinearLayout
@@ -90,13 +88,12 @@
                         android:text="@string/total_no_of_registered_users"
                         android:textSize="24sp" />
                     <TextView
+                        android:id="@+id/totalVotes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="70"
                         android:textColor="#DAE85E5E"
                         android:textStyle="bold"
                         android:textSize="24sp"
-                        android:layout_marginLeft="10dp"
                         android:layout_marginStart="10dp" />
                 </LinearLayout>
             </LinearLayout>
@@ -107,10 +104,10 @@
                 android:layout_marginTop="30dp"
                 android:background="@drawable/percentage_circle">
                 <TextView
+                    android:id="@+id/votePercent"
                     android:layout_width="140dp"
                     android:layout_height="140dp"
                     android:textSize="36sp"
-                    android:text="50%"
                     android:textColor="@color/purple_500"
                     android:gravity="center"/>
             </LinearLayout>

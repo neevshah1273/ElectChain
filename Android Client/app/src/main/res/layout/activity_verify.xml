@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.VerifyActivity"
+    android:orientation="vertical"
+    android:background="@color/background_color">
+
+    <include
+        android:id="@+id/titleBar"
+        layout="@layout/title_bar_return" />
+
+    <include
+        android:layout_height="100dp"
+        android:layout_width="100dp"
+        layout="@layout/logo_name"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_otp"
+            android:layout_marginTop="80dp"
+            android:textSize="20sp"
+            android:textColor="#A45C5C5C" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="40dp">
+            <EditText
+                android:id="@+id/etOtpBox1"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="1"
+                android:background="@drawable/et_box_background"
+                android:layout_marginEnd="5dp"
+                android:padding="5dp" />
+            <EditText
+                android:id="@+id/etOtpBox2"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="1"
+                android:background="@drawable/et_box_background"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:padding="5dp" />
+            <EditText
+                android:id="@+id/etOtpBox3"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="1"
+                android:background="@drawable/et_box_background"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:padding="5dp" />
+            <EditText
+                android:id="@+id/etOtpBox4"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="1"
+                android:background="@drawable/et_box_background"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:padding="5dp" />
+            <EditText
+                android:id="@+id/etOtpBox5"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="1"
+                android:background="@drawable/et_box_background"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:padding="5dp" />
+
+            <EditText
+                android:id="@+id/etOtpBox6"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="1"
+                android:background="@drawable/et_box_background"
+                android:layout_marginStart="5dp"
+                android:padding="5dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnVerify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/red_rounded_button"
+        android:textColor="#FFF"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/submit"
+        android:textSize="30sp" />
+
+</LinearLayout>

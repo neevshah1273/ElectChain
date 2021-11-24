@@ -61,11 +61,10 @@
                     android:textSize="20sp"
                     android:layout_gravity="end" />
                 <TextView
+                    android:id="@+id/firstName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
-                    android:text="Paritosh"
                     android:textSize="18sp" />
             </TableRow>
 
@@ -82,11 +81,10 @@
                     android:textSize="20sp"
                     android:layout_gravity="end" />
                 <TextView
+                    android:id="@+id/lastName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
-                    android:text="Joshi"
                     android:textSize="18sp" />
             </TableRow>
 
@@ -103,11 +101,10 @@
                     android:textSize="20sp"
                     android:layout_gravity="end" />
                 <TextView
+                    android:id="@+id/dob"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
-                    android:text="28 Sep 2000"
                     android:textSize="18sp" />
             </TableRow>
 
@@ -124,11 +121,10 @@
                     android:textSize="20sp"
                     android:layout_gravity="end" />
                 <TextView
+                    android:id="@+id/mobileNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
-                    android:text="7016301343"
                     android:textSize="18sp" />
             </TableRow>
 
@@ -145,11 +141,10 @@
                     android:textSize="20sp"
                     android:layout_gravity="end" />
                 <TextView
+                    android:id="@+id/emailAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
-                    android:text="paritoshj1619@gmail.com"
                     android:textSize="18sp" />
             </TableRow>
 
@@ -166,11 +161,10 @@
                     android:textSize="20sp"
                     android:layout_gravity="end" />
                 <TextView
+                    android:id="@+id/voterId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
-                    android:text="18BCP074"
                     android:textSize="18sp" />
             </TableRow>
         </TableLayout>
