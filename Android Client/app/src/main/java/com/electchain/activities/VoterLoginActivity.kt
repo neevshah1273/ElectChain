@@ -1,38 +1,43 @@
 package com.electchain.activities
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import android.widget.*
 import com.electchain.R
-import com.google.firebase.FirebaseException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
-import java.util.concurrent.TimeUnit
+import com.electchain.models.Result
+import com.electchain.models.User
+import com.electchain.utils.Constants
+import com.electchain.utils.Constants.BASE_URL
+import com.electchain.utils.Constants.retrofit
+import com.electchain.utils.Constants.routerService
+import com.electchain.utils.Constants.sessionManager
+import com.electchain.utils.RouterService
+import com.electchain.utils.SessionManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class VoterLoginActivity : AppCompatActivity() {
-    val context: Context = this
-
-    private lateinit var mAuth: FirebaseAuth
-    private lateinit var forceResendingToken: PhoneAuthProvider.ForceResendingToken
-    private lateinit var mCallBacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
-    private var mVerificationId: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voter_login)
-
-        mAuth = FirebaseAuth.getInstance()
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+
+        retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        routerService = retrofit.create(RouterService::class.java)
+        sessionManager = SessionManager(applicationContext)
 
         val backBtn = findViewById<ImageView>(R.id.backBtn)
         backBtn.setOnClickListener {
@@ -44,37 +49,10 @@ class VoterLoginActivity : AppCompatActivity() {
             val etVoterId = findViewById<EditText>(R.id.etVoterId).text.toString().trim()
             if (checkValidation(etMobileNumber, etVoterId)) {
                 if (etMobileNumber.length == 10) {
-                    etMobileNumber = "+91$etMobileNumber"
-                    mCallBacks = object: PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                            Log.d("TAG", "Credentials: $credential")
-                            signInWithPhoneAuthCredential(credential)
-                        }
-
-                        override fun onVerificationFailed(e: FirebaseException) {
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                        }
-
-                        override fun onCodeSent(
-                            verificationId: String,
-                            token: PhoneAuthProvider.ForceResendingToken
-                        ) {
-                            mVerificationId = verificationId
-                            forceResendingToken = token
-                            Log.d("TAG", mVerificationId!!)
-                            val intent = Intent(context, VerifyActivity::class.java)
-                            intent.putExtra("mVerificationId", mVerificationId)
-                            startActivity(intent)
-                        }
-                    }
-                    mAuth.setLanguageCode("en")
-                    val options = PhoneAuthOptions.newBuilder(mAuth)
-                        .setPhoneNumber(etMobileNumber)
-                        .setTimeout(60L, TimeUnit.SECONDS)
-                        .setActivity(this)
-                        .setCallbacks(mCallBacks)
-                        .build()
-                    PhoneAuthProvider.verifyPhoneNumber(options)
+                    etMobileNumber = "91$etMobileNumber"
+                    val user = User()
+                    user.phone = etMobileNumber
+                    voterLogin(user)
                 } else {
                     Toast.makeText(this, "Mobile number must be of 10 digits.", Toast.LENGTH_SHORT).show()
                 }
@@ -84,17 +62,25 @@ class VoterLoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        mAuth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("TAG", "Sign In Successful")
-                    val user = task.result?.user
-                    Log.d("TAG", "User: $user")
-                } else {
-                    Log.d("TAG", "Failure: ", task.exception)
+    private fun voterLogin(user: User) {
+        val call: Call<Result> = routerService.voterLogin(user)
+
+        call.enqueue(object: Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
+                if (response.code() == 200) {
+                    val result: Result = response.body()!!
+                    Toast.makeText(applicationContext, result.message, Toast.LENGTH_SHORT).show()
+                    val intent = Intent(applicationContext, VerifyActivity::class.java)
+                    intent.putExtra("phone", user.phone)
+                    startActivity(intent)
+                } else if (response.code() == 400) {
+                    Toast.makeText(applicationContext, "Something went wrong. Cannot send otp.", Toast.LENGTH_SHORT).show()
                 }
             }
+            override fun onFailure(call: Call<Result>, t: Throwable) {
+                Toast.makeText(applicationContext, "Server not responding.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun checkValidation(etMobileNumber: String, etVoterId: String): Boolean {

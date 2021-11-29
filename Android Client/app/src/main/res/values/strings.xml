@@ -43,9 +43,14 @@
     <string name="electchain_admin">Electchain Admin</string>
     <string name="register_new_user">Register New User</string>
     <string name="change_phase">Change Phase</string>
-    <string name="current_phase">Current Phase:</string>
+    <string name="current_phase">Current Phase</string>
     <string name="new_candidate">New Candidate</string>
     <string name="submit">Submit</string>
     <string name="campaign_description">Campaign Description</string>
     <string name="enter_otp">Enter otp to verify your mobile number</string>
+    <string name="_1_dec_2021_5_00_pm">1 Dec 2021 5:00 PM</string>
+    <string name="result">Result</string>
+    <string name="result_not_declared">Result not declared</string>
+    <string name="the_winner_is">The winner is</string>
+    <string name="check_result">Check Result</string>
 </resources>

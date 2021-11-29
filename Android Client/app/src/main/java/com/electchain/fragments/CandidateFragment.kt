@@ -9,15 +9,23 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.auth0.android.jwt.JWT
 import com.electchain.R
 import com.electchain.adapters.CandidateAdapter
 import com.electchain.models.Candidate
 import com.electchain.models.ItemsViewModelCandidate
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
+import com.electchain.models.Token
+import com.electchain.utils.Constants.BASE_URL
+import com.electchain.utils.Constants.retrofit
+import com.electchain.utils.Constants.routerService
+import com.electchain.utils.Constants.sessionManager
+import com.electchain.utils.RouterService
+import com.electchain.utils.SessionManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -26,7 +34,7 @@ class CandidateFragment : Fragment() {
 
     private var flag: Boolean = false
 
-    val data = ArrayList<ItemsViewModelCandidate>()
+    private val data = ArrayList<ItemsViewModelCandidate>()
     lateinit var adapter: CandidateAdapter
 
     private var param1: String? = null
@@ -49,10 +57,19 @@ class CandidateFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        routerService = retrofit.create(RouterService::class.java)
+        sessionManager = SessionManager(requireActivity())
+
         val recyclerViewCandidate = view.findViewById<RecyclerView>(R.id.recyclerViewCandidate)
         recyclerViewCandidate.layoutManager = LinearLayoutManager(context)
         if (!flag) {
-            addCandidateToView()
+            getCandidateList()
             flag = true
         }
         if (flag) {
@@ -61,23 +78,36 @@ class CandidateFragment : Fragment() {
         }
     }
 
-    private fun addCandidateToView() {
-        val database = FirebaseDatabase.getInstance("https://electchain-79613-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
-        database.child("candidates").addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (item in snapshot.children) {
-                    data.add(ItemsViewModelCandidate(
-                        R.drawable.ic_person,
-                        "${item.child("candidateName").value}",
-                        "${item.child("campaignDescription").value}")
-                    )
-                }
-                adapter = CandidateAdapter(data)
-                view?.findViewById<RecyclerView>(R.id.recyclerViewCandidate)?.adapter = adapter
-            }
+    private fun getCandidateList() {
+        val token = Token()
+        token.token = sessionManager.fetchAuthToken()?.let { it1 -> JWT(it1) }.toString()
 
-            override fun onCancelled(e: DatabaseError) {
-                Toast.makeText(requireActivity(),e.message,Toast.LENGTH_SHORT).show()
+        val call: Call<List<Candidate>> = routerService.getCandidatesList(token)
+
+        call.enqueue(object: Callback<List<Candidate>> {
+            override fun onResponse(call: Call<List<Candidate>>, response: Response<List<Candidate>>) {
+                when {
+                    response.code() == 200 -> {
+                        val result: List<Candidate> = response.body()!!
+                        for (i in result.indices) {
+                            data.add(ItemsViewModelCandidate(R.drawable.ic_person, result[i].candidateName, result[i].campaignDescription))
+                        }
+                        adapter = CandidateAdapter(data)
+                        view?.findViewById<RecyclerView>(R.id.recyclerViewCandidate)?.adapter = adapter
+                    }
+                    response.code() == 400 -> {
+                        Toast.makeText(requireActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show()
+                    }
+                    response.code() == 401 -> {
+                        Toast.makeText(requireActivity(), "Access Denied.", Toast.LENGTH_SHORT).show()
+                    }
+                    response.code() == 403 -> {
+                        Toast.makeText(requireActivity(), "Invalid token.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            override fun onFailure(call: Call<List<Candidate>>, t: Throwable) {
+                Toast.makeText(requireActivity(), "Server not responding.", Toast.LENGTH_SHORT).show()
             }
         })
     }

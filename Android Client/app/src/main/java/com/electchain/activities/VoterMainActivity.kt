@@ -8,9 +8,18 @@ import androidx.fragment.app.Fragment
 import com.electchain.R
 import com.electchain.fragments.CandidateFragment
 import com.electchain.fragments.ElectionFragment
+import com.electchain.fragments.ResultFragment
 import com.electchain.fragments.VoterFragment
+import com.electchain.utils.Constants
+import com.electchain.utils.Constants.BASE_URL
+import com.electchain.utils.Constants.retrofit
+import com.electchain.utils.Constants.routerService
+import com.electchain.utils.Constants.sessionManager
+import com.electchain.utils.RouterService
+import com.electchain.utils.SessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class VoterMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,8 +31,17 @@ class VoterMainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
+        retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        routerService = retrofit.create(RouterService::class.java)
+        sessionManager = SessionManager(applicationContext)
+
         val electionFragment = ElectionFragment()
         val candidateFragment = CandidateFragment()
+        val resultFragment = ResultFragment()
         val voterFragment = VoterFragment()
 
         makeCurrentFragment(electionFragment)
@@ -33,6 +51,7 @@ class VoterMainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.ic_election -> makeCurrentFragment(electionFragment)
                 R.id.ic_candidate -> makeCurrentFragment(candidateFragment)
+                R.id.ic_result -> makeCurrentFragment(resultFragment)
                 R.id.ic_account -> makeCurrentFragment(voterFragment)
             }
             true

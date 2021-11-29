@@ -10,8 +10,9 @@ import android.widget.Button
 import android.widget.TextView
 import com.electchain.R
 import com.electchain.activities.MainActivity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
+import com.electchain.utils.Constants.ADMIN_EMAIL
+import com.electchain.utils.Constants.sessionManager
+import com.electchain.utils.SessionManager
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -37,9 +38,7 @@ class AdminFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val email = FirebaseAuth.getInstance().currentUser?.email
-        view.findViewById<TextView>(R.id.tvEmailAddress).text = email
-
+        view.findViewById<TextView>(R.id.tvEmailAddress).text = ADMIN_EMAIL
         view.findViewById<Button>(R.id.btnLogout).setOnClickListener {
             logout()
         }
@@ -57,8 +56,8 @@ class AdminFragment : Fragment() {
     }
 
     private fun logout() {
-        val mAuth = FirebaseAuth.getInstance()
-        mAuth.signOut()
+        sessionManager = SessionManager(requireActivity())
+        sessionManager.deleteAuthToken()
         startActivity(Intent(requireActivity(), MainActivity::class.java))
         requireActivity().finish()
     }

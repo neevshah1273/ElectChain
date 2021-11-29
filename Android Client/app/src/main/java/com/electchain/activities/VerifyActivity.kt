@@ -13,16 +13,24 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.electchain.R
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
+import com.electchain.models.Result
+import com.electchain.models.User
+import com.electchain.utils.Constants
+import com.electchain.utils.Constants.BASE_URL
+import com.electchain.utils.Constants.retrofit
+import com.electchain.utils.Constants.routerService
+import com.electchain.utils.Constants.sessionManager
+import com.electchain.utils.RouterService
+import com.electchain.utils.SessionManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class VerifyActivity : AppCompatActivity() {
-    val context: Context = this
-
     private lateinit var otpCode: String
-    lateinit var  mAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify)
@@ -32,8 +40,13 @@ class VerifyActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        mAuth = FirebaseAuth.getInstance()
+        retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
+        routerService = retrofit.create(RouterService::class.java)
+        sessionManager = SessionManager(applicationContext)
         otpInputHandler()
     }
 
@@ -55,28 +68,42 @@ class VerifyActivity : AppCompatActivity() {
         etOtpBox6.addTextChangedListener(GenericTextWatcher(etOtpBox6, edit))
 
         findViewById<Button>(R.id.btnVerify).setOnClickListener {
-            val verificationId = intent.getStringExtra("mVerificationId")
             otpCode = etOtpBox1.text.toString() + etOtpBox2.text.toString() + etOtpBox3.text.toString() + etOtpBox4.text.toString() + etOtpBox5.text.toString() + etOtpBox6.text.toString()
             if (otpCode.length == 6) {
-                val credential: PhoneAuthCredential = PhoneAuthProvider.getCredential(
-                    verificationId.toString(), otpCode)
-                signInWithPhoneAuthCredential(credential)
+                val phone = intent.getStringExtra("phone")
+                val user = User()
+                user.phone = phone!!
+                user.otpCode = otpCode
+                verifyOtp(user)
             } else {
-                Toast.makeText(context, "Invalid Code", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Invalid Code", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        mAuth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    startActivity(Intent(context, VoterMainActivity::class.java))
-                    finish()
-                } else {
-                    Toast.makeText(context, "${task.exception}", Toast.LENGTH_SHORT).show()
+    private fun verifyOtp(user: User) {
+        val call: Call<Result> = routerService.verifyOtp(user)
+
+        call.enqueue(object: Callback<Result> {
+            override fun onResponse(call: Call<Result>, response: Response<Result>) {
+                when {
+                    response.code() == 200 -> {
+                        val result: Result = response.body()!!
+                        sessionManager.saveAuthToken(result.token)
+                        startActivity(Intent(applicationContext, VoterMainActivity::class.java))
+                    }
+                    response.code() == 400 -> {
+                        Toast.makeText(applicationContext, "Something went wrong. Cannot verify entered otp.", Toast.LENGTH_SHORT).show()
+                    }
+                    response.code() == 401 -> {
+                        Toast.makeText(applicationContext, "Invalid otp entered.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
+            override fun onFailure(call: Call<Result>, t: Throwable) {
+                Toast.makeText(applicationContext, "Server not responding.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
 }

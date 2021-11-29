@@ -3,6 +3,7 @@ package com.electchain.fragments
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.se.omapi.Session
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,14 +12,23 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.auth0.android.jwt.JWT
 import com.electchain.R
 import com.electchain.activities.MainActivity
-import com.electchain.activities.VoterLoginActivity
+import com.electchain.models.Token
+import com.electchain.models.User
+import com.electchain.utils.Constants
+import com.electchain.utils.Constants.BASE_URL
+import com.electchain.utils.Constants.retrofit
+import com.electchain.utils.Constants.routerService
 import com.electchain.utils.Constants.sessionManager
+import com.electchain.utils.RouterService
 import com.electchain.utils.SessionManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import org.w3c.dom.Text
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -46,37 +56,54 @@ class VoterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fetchUserData()
+        retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        routerService = retrofit.create(RouterService::class.java)
+        sessionManager = SessionManager(requireActivity())
+        getVoterDetail()
         view.findViewById<Button>(R.id.btnLogout).setOnClickListener {
             logout()
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun fetchUserData() {
-        val database = FirebaseDatabase.getInstance("https://electchain-79613-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("users")
-        val user = FirebaseAuth.getInstance().currentUser?.phoneNumber
-        database.child(user!!).get().addOnSuccessListener {
-            if (it.exists()) {
-                view?.findViewById<TextView>(R.id.firstName)?.text =
-                    it.child("firstName").value as CharSequence?
-                view?.findViewById<TextView>(R.id.lastName)?.text =
-                    it.child("lastName").value as CharSequence?
-                val dob = it.child("dob").value.toString().split('/')
-                view?.findViewById<TextView>(R.id.dob)?.text = "${dob[0]}  ${months[dob[1].toInt() - 1]} , ${dob[2]}"
-                view?.findViewById<TextView>(R.id.mobileNumber)?.text =
-                    it.child("mobileNumber").value as CharSequence?
-                view?.findViewById<TextView>(R.id.emailAddress)?.text =
-                    it.child("emailAddress").value as CharSequence?
-                view?.findViewById<TextView>(R.id.voterId)?.text =
-                    it.child("voterId").value as CharSequence?
+    private fun getVoterDetail() {
+        val token = Token()
+        token.token = sessionManager.fetchAuthToken()?.let { it1 -> JWT(it1) }.toString()
+        val call: Call<User> = routerService.voterDetail(token)
 
-            } else {
-                Toast.makeText(requireActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show()
+        call.enqueue(object: Callback<User> {
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                when {
+                    response.code() == 200 -> {
+                        val result: User = response.body()!!
+                        view?.findViewById<TextView>(R.id.firstName)?.text = result.firstName
+                        view?.findViewById<TextView>(R.id.lastName)?.text = result.lastName
+                        view?.findViewById<TextView>(R.id.dob)?.text = result.dob
+                        view?.findViewById<TextView>(R.id.mobileNumber)?.text = result.phone
+                        view?.findViewById<TextView>(R.id.emailAddress)?.text = result.email
+                        view?.findViewById<TextView>(R.id.voterId)?.text = result.voterId
+                    }
+                    response.code() == 400 -> {
+                        Toast.makeText(requireActivity(), "Something went wrong. Cannot fetch user details.", Toast.LENGTH_SHORT).show()
+                    }
+                    response.code() == 401 -> {
+                        Toast.makeText(requireActivity(), "Access Denied.", Toast.LENGTH_SHORT).show()
+                    }
+                    response.code() == 403 -> {
+                        Toast.makeText(requireActivity(), "Invalid Token.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
-        }
+            override fun onFailure(call: Call<User>, t: Throwable) {
+                Toast.makeText(requireActivity(), "Server not responding.", Toast.LENGTH_SHORT).show()
+            }
 
+        })
     }
+
 
     companion object {
         @JvmStatic
@@ -90,8 +117,8 @@ class VoterFragment : Fragment() {
     }
 
     private fun logout() {
-        val mAuth = FirebaseAuth.getInstance()
-        mAuth.signOut()
+        sessionManager = SessionManager(requireActivity())
+        sessionManager.deleteAuthToken()
         startActivity(Intent(requireActivity(), MainActivity::class.java))
         requireActivity().finish()
     }

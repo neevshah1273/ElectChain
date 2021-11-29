@@ -1,7 +1,8 @@
 package com.electchain.models
 
 data class Candidate (
-    val uuid: String = "",
-    val candidateName: String = "",
-    val campaignDescription: String = ""
+    var candidateId: String = "",
+    var candidateName: String = "",
+    var campaignDescription: String = "",
+    var token: String = ""
 )

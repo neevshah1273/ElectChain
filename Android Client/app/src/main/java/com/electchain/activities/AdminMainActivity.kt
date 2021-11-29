@@ -6,9 +6,19 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import com.electchain.R
 import com.electchain.fragments.*
+import com.electchain.utils.Constants
+import com.electchain.utils.Constants.BASE_URL
+import com.electchain.utils.Constants.retrofit
+import com.electchain.utils.Constants.routerService
+import com.electchain.utils.Constants.sessionManager
+import com.electchain.utils.RouterService
+import com.electchain.utils.SessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class AdminMainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_main)
@@ -16,6 +26,14 @@ class AdminMainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+
+        retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        routerService = retrofit.create(RouterService::class.java)
+        sessionManager = SessionManager(applicationContext)
 
         val registrationFragment = RegistrationFragment()
         val addCandidateFragment = AddCandidateFragment()
@@ -35,6 +53,7 @@ class AdminMainActivity : AppCompatActivity() {
             true
         }
     }
+
     private fun makeCurrentFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.flWrapper, fragment)

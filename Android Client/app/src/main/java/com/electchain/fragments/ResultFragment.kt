@@ -1,19 +1,20 @@
 package com.electchain.fragments
 
-import android.os.Build
+import android.opengl.Visibility
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
 import com.auth0.android.jwt.JWT
 import com.electchain.R
 import com.electchain.models.Candidate
 import com.electchain.models.Result
+import com.electchain.models.Status
+import com.electchain.models.Token
 import com.electchain.utils.Constants
 import com.electchain.utils.Constants.BASE_URL
 import com.electchain.utils.Constants.retrofit
@@ -27,11 +28,12 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class AddCandidateFragment : Fragment() {
+class ResultFragment : Fragment() {
+    private var isActive = false
+    private var isCompleted = false
     private var param1: String? = null
     private var param2: String? = null
 
@@ -47,10 +49,9 @@ class AddCandidateFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_add_candidate, container, false)
+        return inflater.inflate(R.layout.fragment_result, container, false)
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -58,63 +59,72 @@ class AddCandidateFragment : Fragment() {
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
         routerService = retrofit.create(RouterService::class.java)
         sessionManager = SessionManager(requireActivity())
-
-        view.findViewById<Button>(R.id.btnSubmit).setOnClickListener {
-            val etCandidateName = view.findViewById<EditText>(R.id.etCandidateName).text.toString()
-            val etCampaignDescription = view.findViewById<EditText>(R.id.etCampaignDescription).text.toString()
-            if (checkValidation(etCandidateName, etCampaignDescription)) {
-                val candidate = Candidate()
-                candidate.candidateName = etCandidateName
-                candidate.campaignDescription = etCampaignDescription
-                candidate.token = sessionManager.fetchAuthToken()?.let { it1 -> JWT(it1) }.toString()
-                addCandidate(candidate)
+        checkStatus()
+        if (!isCompleted) {
+            view.findViewById<TextView>(R.id.tvText).visibility = View.GONE
+        } else {
+            getResult()
+        }
+        view.findViewById<Button>(R.id.btnCheckResult).setOnClickListener {
+            if (isCompleted) {
+                getResult()
             } else {
-                Toast.makeText(requireActivity(), "All fields are required.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireActivity(), "Voting hasn't ended yet.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun addCandidate(candidate: Candidate) {
-        val call: Call<Result> = routerService.addCandidate(candidate)
+    private fun getResult() {
+        val token = Token()
+        token.token = sessionManager.fetchAuthToken()?.let { it1 -> JWT(it1) }.toString()
+        val call: Call<Result> = routerService.getResult(token)
 
         call.enqueue(object: Callback<Result> {
             override fun onResponse(call: Call<Result>, response: Response<Result>) {
                 if (response.code() == 200) {
-                    val result: Result = response.body()!!
-                    Toast.makeText(requireActivity(), result.message, Toast.LENGTH_SHORT).show()
-                    emptyEditText()
+                    val result = response.body()!!
+                    view?.findViewById<TextView>(R.id.tvText)?.visibility = View.VISIBLE
+                    view?.findViewById<TextView>(R.id.tvResult)?.text = result.message
                 } else if (response.code() == 400) {
-                    Toast.makeText(requireActivity(), "Something went wrong. Try again later.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<Result>, t: Throwable) {
                 Toast.makeText(requireActivity(), "Server not responding.", Toast.LENGTH_SHORT).show()
             }
-
         })
     }
 
-    private fun emptyEditText() {
-        view?.findViewById<EditText>(R.id.etCandidateName)?.setText("")
-        view?.findViewById<EditText>(R.id.etCampaignDescription)?.setText("")
+    private fun checkStatus() {
+        val token = Token()
+        token.token = sessionManager.fetchAuthToken()?.let { it1 -> JWT(it1) }.toString()
+        val call: Call<Status> = routerService.isActive(token)
+        call.enqueue(object: Callback<Status> {
+            override fun onResponse(call: Call<Status>, response: Response<Status>) {
+                if (response.code() == 200) {
+                    val result: Status = response.body()!!
+                    isActive = result.isActive
+                    isCompleted = result.isCompleted
+                } else {
+                    Toast.makeText(requireActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<Status>, t: Throwable) {
+                Toast.makeText(requireActivity(), "Server not responding.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
-
 
     companion object {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            AddCandidateFragment().apply {
+            ResultFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
                 }
             }
-    }
-
-    private fun checkValidation(etCandidateName: String, etCampaignDescription: String): Boolean {
-        return etCandidateName.isNotEmpty() && etCampaignDescription.isNotEmpty()
     }
 }
