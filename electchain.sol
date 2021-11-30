@@ -84,6 +84,11 @@ contract ElectChain {
         return state == State.Post;
     }
     
+    function Restart() public onlyOwner {
+        voterCount = 0;
+        state = State.Pre;
+    }
+    
     function addVoter(string memory voterId,address voterAddress,bool isvoted) public onlyPreElection{
         incrementVC();
         voters[voterCount] = Voter(voterCount,voterId,voterAddress,isvoted);
